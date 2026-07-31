@@ -9,7 +9,7 @@ export const addIssuedbook = async (issuedbookdata) => {
   return response.data;
 };
 
-export const deletIssuedbook = async (id) => {
-  const response = await api.delete(`/issued-books/${id}`);
+export const returnIssuedbook = async (id) => {
+  const response = await api.put(`/issued-books/${id}/return`);
   return response.data;
 };

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getIssuedbook, addIssuedbook, deletIssuedbook } from "../services/issuedbookService";
+import { getIssuedbook, addIssuedbook, returnIssuedbook } from "../services/issuedbookService";
 import Button from "../components/Button";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -14,11 +14,11 @@ function Issuedbook() {
     book_id: "",
     member_id: "",
     issue_date: "",
-    return_date: "",
   });
 
   const fetchIssuedbooks = async () => {
     const response = await getIssuedbook();
+    console.log("API Response:", response.data);
     setIssuedbooks(response.data.data);
   };
 
@@ -41,18 +41,14 @@ function Issuedbook() {
       book_id: "",
       member_id: "",
       issue_date: "",
-      return_date: "",
     });
     fetchIssuedbooks();
   }
 
-  const handleDelete = async (id) => {
-    await deletIssuedbook(id);
+  const handleReturn = async (id) => {
+    await returnIssuedbook(id);
     fetchIssuedbooks();
   };
-
-  console.log(issuedbooks);
-  
 
 
   return (
@@ -61,46 +57,116 @@ function Issuedbook() {
 
       {user.role === "admin" && (
         <form onSubmit={handleSubmit}>
-        <input
-          name="book_id"
-          placeholder="Book Id"
-          value={formData.book_id}
-          onChange={handleChange}
-        />
+          <input
+            name="book_id"
+            placeholder="Book Id"
+            value={formData.book_id}
+            onChange={handleChange}
+          />
 
-        <input
-          name="member_id"
-          placeholder="Member Id"
-          value={formData.member_id}
-          onChange={handleChange}
-        />
+          <input
+            name="member_id"
+            placeholder="Member Id"
+            value={formData.member_id}
+            onChange={handleChange}
+          />
 
-        <input
-          name="issue_date"
-          placeholder="Issue Date"
-          value={formData.issue_date}
-          onChange={handleChange}
-        />
-
-        <input
-          name="return_date"
-          placeholder="Return Date"
-          value={formData.return_date}
-          onChange={handleChange}
-        />
+          <input
+            name="issue_date"
+            placeholder="Issue Date"
+            value={formData.issue_date}
+            onChange={handleChange}
+          />
 
           <Button type="submit">Add Issued book</Button>
-      </form>)}
+        </form>)}
 
-      {issuedbooks.map((issuedbook) => (
-        <p key={issuedbook.id}>{issuedbook.name}
-          {user.role === "admin" && (
-            <button className="bg-red-500 m-3 p-1"
-              onClick={() => handleDelete(issuedbook.id)}>
-              Delete
-            </button>)}</p>
-      ))}
+      <div className="mt-6 overflow-x-auto bg-white rounded-lg shadow">
 
+        <table className="min-w-full">
+
+          <thead className="bg-gray-100">
+            <tr>
+
+              <th className="px-6 py-3 text-left">
+                Book
+              </th>
+
+              <th className="px-6 py-3 text-left">
+                Member
+              </th>
+
+              <th className="px-6 py-3 text-left">
+                Issue Date
+              </th>
+
+              <th className="px-6 py-3 text-left">
+                Return Date
+              </th>
+
+              <th className="px-6 py-3 text-left">
+                status
+              </th>
+
+              {user.role === "admin" && (
+                <th className="px-6 py-3 text-left">
+                  Actions
+                </th>
+              )}
+
+            </tr>
+          </thead>
+
+          <tbody>
+
+            {issuedbooks.map((issuedbook) => (
+
+              <tr
+                key={issuedbook.id}
+                className="border-b hover:bg-gray-50"
+              >
+
+                <td className="px-6 py-4">
+                  {issuedbook.title}
+                </td>
+
+
+                <td className="px-6 py-4">
+                  {issuedbook.name}
+                </td>
+
+                <td className="px-6 py-4">
+                  {issuedbook.issue_date}
+                </td>
+
+                <td className="px-6 py-4">
+                  {issuedbook.return_date}
+                </td>
+
+                <td className="px-6 py-4">
+                  {issuedbook.status}
+                </td>
+
+                {user.role === "admin" && (
+
+                  <td className="px-6 py-4">
+
+                    {issuedbook.status === "issued" && (
+                      <button
+                        className="bg-green-500 text-white px-3 py-1 rounded"
+                        onClick={() => handleReturn(issuedbook.id)}
+                      >
+                        Return book
+                      </button>
+                    )}
+
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
