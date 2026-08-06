@@ -1,68 +1,137 @@
 import { useEffect, useState } from "react";
+import { BookOpen, Users, Repeat, Library } from "lucide-react";
+import Card from "../components/Card";
 import { getBooks } from "../services/bookService";
 import { getMembers } from "../services/memberService";
-import { getIssuedbook } from "../services/issuedbookService";
-import Card from "../components/Card";
+import { getIssuedbook } from "../services/issuedBookService";
+
+
 function Dashboard() {
 
-  const [books, setBooks] = useState([]);
-  const [members, setMembers] = useState([]);
-  const [issuedBooks, setIssuedBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
+    const [books, setBooks] = useState([]);
+    const [members, setMembers] = useState([]);
+    const [issuedBooks, setIssuedBooks] = useState([]);
 
-  const fetchDashboard = async () => {
-    const book = await getBooks();
-    setBooks(book.data.data);
-    const member = await getMembers();
-    setMembers(member.data.data);
-    const issuedbook = await getIssuedbook();
-    setIssuedBooks(issuedbook.data.data);
-  };
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
+    useEffect(() => {
 
-  // if (loading) {
-  //   return <h2>Loading...</h2>;
-  // }
+        async function fetchData() {
 
-  return (
+            try {
+                const booksData = await getBooks();
+                const membersData = await getMembers();
+                const issuedData = await getIssuedbook();
 
-    <div>
+                setBooks(booksData.data.data);
+                setMembers(membersData.data.data);
+                setIssuedBooks(issuedData.data.data);
 
-      <h1>Dashboard</h1>
+            } catch (error) {
+                console.log(error);
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            } finally {
+                setLoading(false);
 
-        <Card>
-          <h3 className="text-gray-500">Total Books</h3>
-          <p className="text-3xl font-bold">{books.length}</p>
-        </Card>
+            }}
+        fetchData();},[]);
 
-        <Card>
-          <h3 className="text-gray-500">Total Members</h3>
-          <p className="text-3xl font-bold">{members.length}</p>
-        </Card>
+    const stats = [
 
-        <Card>
-          <h3 className="text-gray-500">Issued Books</h3>
-          <p className="text-3xl font-bold">{issuedBooks.length}</p>
-        </Card>
+        {
+            title: "Total Books",
+            value: books.length,
+            icon: <BookOpen size={27} />,
+        },
+        {
+            title: "Members",
+            value: members.length,
+            icon: <Users size={27} />,
+        },
+        {
+            title: "Issued Books",
+            value: issuedBooks.length,
+            icon: <Repeat size={27} />,
+        },
+        {
+            title: "Available Copies",
+            value: books.reduce(
+                (total, book) => total + book.available_copies,0),
+            icon: <Library size={27} />,
+        }
+    ];
 
-        <Card>
-          <h3 className="text-gray-500">Available Copies</h3>
-          <p className="text-3xl font-bold">
-            {books.reduce(
-              (total, book) => total + book.available_copies,0)}
-          </p>
-        </Card>
 
-      </div>
+    if (loading) {
+        return (
+            <div className="text-center text-gray-500">
+                Loading dashboard...
+            </div>
+        );
+    }
 
-    </div>
+    return (
 
-  )
+        <div className="space-y-6">
+
+            <div>
+
+                <h1 className="text-3xl font-bold text-gray-800">
+                    Welcome back👋
+                </h1>
+                <p className="text-gray-500 mt-1">
+                    Manage your library efficiently with BookSphere.
+                </p>
+
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                {stats.map((item, index) => (
+
+                    <Card key={index}
+                    className="hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
+
+                        <div className="flex items-center justify-between">
+
+                            <div>
+
+                                <p className="text-gray-500 text-sm">
+                                    {item.title}
+                                </p>
+
+                                <h2 className="text-3xl font-bold text-gray-800 mt-2">
+                                    {item.value}
+                                </h2>
+
+                            </div>
+
+                            <div className="bg-indigo-100 text-indigo-600 p-4 rounded-2xl">
+                                {item.icon}
+
+                            </div>
+
+                        </div>
+
+                    </Card>
+
+                ))}
+
+            </div>
+
+            <Card>
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                    Recent Activity
+                </h2>
+                <p className="text-gray-500">
+                    No recent activity available.
+                </p>
+            </Card>
+
+        </div>
+
+    );
+
 }
 
 export default Dashboard;

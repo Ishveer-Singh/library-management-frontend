@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../services/authService";
+import AuthLayout from "../components/AuthLayout";
+import Card from "../components/Card";
+import Input from "../components/Input";
+import Button from "../components/Button";
 
 function Register() {
 
@@ -36,37 +40,69 @@ function Register() {
 
   return (
 
-    <div>
+    <AuthLayout>
 
-      <form onSubmit={handleSubmit}>
-        <input
+    <Card className="w-full max-w-lg shadow-xl">
+
+      <h2 className="text-3xl font-bold text-gray-900">
+        Create Account
+      </h2>
+
+      <p className="text-gray-500 mt-2 mb-6">
+        Join BookSphere today.
+      </p>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+
+        <Input
+          label="Name"
           type="text"
           name="name"
-          placeholder="Name"
+          placeholder="Enter your name"
           value={formData.name}
           onChange={handleChange}
+          required
         />
 
-        <input
+        <Input
+          label="Email"
           type="email"
           name="email"
-          placeholder="Email"
+          placeholder="Enter your email"
           value={formData.email}
           onChange={handleChange}
+          required
         />
 
-        <input
+        <Input
+          label="Password"
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder="Enter your password"
           value={formData.password}
           onChange={handleChange}
+          required
         />
 
-        <button type="submit">Register</button>
+        <Button type="submit" className="w-full">
+          Register
+        </Button>
+
       </form>
 
-    </div>
+      <p className="text-center text-sm text-gray-500 mt-6">
+        Already have an account?{" "}
+        <span
+          onClick={() => navigate("/login")}
+          className="text-indigo-600 font-medium cursor-pointer hover:text-indigo-700"
+        >
+          Login
+        </span>
+      </p>
+
+    </Card>
+
+  </AuthLayout>
 
   )
 }

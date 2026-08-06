@@ -4,6 +4,11 @@ import { loginUser } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+import AuthLayout from "../components/AuthLayout";
+import Card from "../components/Card";
+import Input from "../components/Input";
+import Button from "../components/Button";
+
 function Login() {
 
   const navigate = useNavigate();
@@ -11,10 +16,10 @@ function Login() {
   const { login } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
-      name: "",
-      email: "",
-      password: "",
-    });
+    name: "",
+    email: "",
+    password: "",
+  });
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -37,30 +42,59 @@ function Login() {
 
   return (
 
-    <div>
-     
-     <form onSubmit={handleLogin}>
+    <AuthLayout>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-        />
+      <Card className="w-full max-w-lg shadow-xl">
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-        />
+        <h2 className="text-3xl font-bold text-gray-900">
+          Welcome Back
+        </h2>
 
-        <button type="submit">Login</button>
-      </form>
+        <p className="text-gray-500 mt-2 mb-6">
+          Login to continue to BookSphere
+        </p>
 
-    </div>
+        <form onSubmit={handleLogin} className="space-y-5">
+
+          <Input
+            label="Email"
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+
+          <Input
+            label="Password"
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+
+          <Button type="submit" className="w-full">
+            Login
+          </Button>
+
+        </form>
+
+        <p className="text-center text-sm text-gray-500 mt-6">
+          Don't have an account?{" "}
+          <span
+            onClick={() => navigate("/register")}
+            className="text-indigo-600 font-medium cursor-pointer hover:text-indigo-700"
+          >
+            Register
+          </span>
+        </p>
+
+      </Card>
+
+    </AuthLayout>
 
   );
 }

@@ -1,38 +1,173 @@
+// import { NavLink } from "react-router-dom";
+// import {
+//   LayoutDashboard,
+//   BookOpen,
+//   Users,
+//   ArrowRightLeft,
+//   UserCircle,
+// } from "lucide-react";
+// import Logo from "./Logo";
+
+// function Sidebar() {
+
+//   const linkClass = ({ isActive }) =>
+//     `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
+//       ? "bg-[#4F46E5] text-white"
+//       : "text-gray-300 hover:bg-slate-800 hover:text-white hover:translate-x-1"
+//     }`;
+
+//   return (
+
+//     <aside className="w-64 h-screen bg-[#0F172A] px-5 py-6 flex flex-col sticky top-0">
+
+//       <div className="pb-6">
+//         <Logo />
+//         <div className="border-b border-slate-700 mt-5"></div>
+//       </div>
+
+
+//       <nav className="flex-1 flex flex-col gap-3">
+
+//         <NavLink to="/" className={linkClass}>
+//           <LayoutDashboard className="w-5 h-5" size={20} />
+//           <span>Dashboard</span>
+//         </NavLink>
+
+//         <NavLink to="/books" className={linkClass}>
+//           <BookOpen className="w-5 h-5" size={20} />
+//           <span>Books</span>
+//         </NavLink>
+
+//         <NavLink to="/members" className={linkClass}>
+//           <Users className="w-5 h-5" size={20} />
+//           <span>Members</span>
+//         </NavLink>
+
+//         <NavLink to="/issue-books" className={linkClass}>
+//           <ArrowRightLeft className="w-5 h-5" size={20} />
+//           <span>Issue Books</span>
+//         </NavLink>
+
+//         <NavLink to="/profile" className={linkClass}>
+//           <UserCircle className="w-5 h-5" size={20} />
+//           <span>Profile</span>
+//         </NavLink>
+
+//       </nav>
+
+//     </aside>
+
+//   );
+// }
+
+// export default Sidebar;
+
 import { NavLink } from "react-router-dom";
+import {
+  LayoutDashboard,
+  BookOpen,
+  Users,
+  ArrowRightLeft,
+  UserCircle,
+  X,
+} from "lucide-react";
 
-function Sidebar() {
+import Logo from "./Logo";
 
+function Sidebar({ mobile = false, open = false, onClose }) {
   const linkClass = ({ isActive }) =>
-    isActive
-      ? "bg-blue-600 text-white p-2 rounded"
-      : "text-gray-700 p-2 rounded hover:bg-gray-200";
+    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+      isActive
+        ? "bg-[#4F46E5] text-white"
+        : "text-gray-300 hover:bg-slate-800 hover:text-white hover:translate-x-1"
+    }`;
 
   return (
+    <>
+      {/* Mobile Overlay */}
+      {mobile && open && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
 
-    <aside className="w-64 min-h-screen bg-white shadow-md p-5">
+      <aside
+        className={`
+          bg-[#0F172A] px-5 py-6 flex flex-col
+          ${
+            mobile
+              ? `fixed top-0 left-0 h-screen w-64 z-50 transform transition-transform duration-300 ${
+                  open ? "translate-x-0" : "-translate-x-full"
+                }`
+              : "w-64 h-screen sticky top-0"
+          }
+        `}
+      >
+        <div className="pb-6 relative">
+          <Logo />
 
-      <h2 className="text-xl font-bold mb-8">
-        Library
-      </h2>
+          {mobile && (
+            <button
+              onClick={onClose}
+              className="absolute top-0 right-0 text-white"
+            >
+              <X size={24} />
+            </button>
+          )}
 
-      <nav className="flex flex-col gap-4">
+          <div className="border-b border-slate-700 mt-5"></div>
+        </div>
 
-        <NavLink to="/" className={linkClass}>🏠 Dashboard</NavLink>
+        <nav className="flex-1 flex flex-col gap-3">
+          <NavLink
+            to="/"
+            className={linkClass}
+            onClick={mobile ? onClose : undefined}
+          >
+            <LayoutDashboard size={20} />
+            <span>Dashboard</span>
+          </NavLink>
 
-        <NavLink to="/books" className={linkClass}>📚 Books</NavLink>
+          <NavLink
+            to="/books"
+            className={linkClass}
+            onClick={mobile ? onClose : undefined}
+          >
+            <BookOpen size={20} />
+            <span>Books</span>
+          </NavLink>
 
-        <NavLink to="/members" className={linkClass}>👥 Members</NavLink>
+          <NavLink
+            to="/members"
+            className={linkClass}
+            onClick={mobile ? onClose : undefined}
+          >
+            <Users size={20} />
+            <span>Members</span>
+          </NavLink>
 
-        <NavLink to="/issue-books" className={linkClass}>🔄 Issue Books</NavLink>
+          <NavLink
+            to="/issue-books"
+            className={linkClass}
+            onClick={mobile ? onClose : undefined}
+          >
+            <ArrowRightLeft size={20} />
+            <span>Issue Books</span>
+          </NavLink>
 
-        <NavLink to="/profile" className={linkClass}>👤 Profile</NavLink>
-
-        {/* <navlink to="">🚪 Logout</navlink> */}
-
-      </nav>
-
-    </aside>
+          <NavLink
+            to="/profile"
+            className={linkClass}
+            onClick={mobile ? onClose : undefined}
+          >
+            <UserCircle size={20} />
+            <span>Profile</span>
+          </NavLink>
+        </nav>
+      </aside>
+    </>
   );
 }
 
-export default Sidebar
+export default Sidebar;

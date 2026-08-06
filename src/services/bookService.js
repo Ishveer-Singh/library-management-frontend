@@ -1,7 +1,7 @@
 import api from "./api";
 
-export const getBooks = (search = "") => {
-  return api.get(`/books?title=${search}`);
+export const getBooks = (page,limit,search = "") => {
+  return api.get(`/books?page=${page}&limit=${limit}&title=${search}`);
 };
 
 export const createBook = async (bookData) => {

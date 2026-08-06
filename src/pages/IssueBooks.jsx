@@ -3,12 +3,17 @@ import { getIssuedbook, addIssuedbook, returnIssuedbook } from "../services/issu
 import Button from "../components/Button";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import Input from "../components/Input";
+import { Undo2 } from "lucide-react";
 
 function Issuedbook() {
 
   const { user } = useContext(AuthContext);
 
   const [issuedbooks, setIssuedbooks] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
 
   const [formData, setFormData] = useState({
     book_id: "",
@@ -17,14 +22,14 @@ function Issuedbook() {
   });
 
   const fetchIssuedbooks = async () => {
-    const response = await getIssuedbook();
-    console.log("API Response:", response.data);
+    const response = await getIssuedbook(page, limit);
     setIssuedbooks(response.data.data);
+    setTotalPages(response.data.totalPages);
   };
 
   useEffect(() => {
     fetchIssuedbooks();
-  }, []);
+  }, [page]);
 
   const handleChange = (e) => {
     setFormData({
@@ -50,63 +55,72 @@ function Issuedbook() {
     fetchIssuedbooks();
   };
 
-
   return (
     <div>
-      <h1>Issued-books</h1>
+
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-800">
+            Issued Books
+          </h1>
+
+          <p className="text-slate-500 mt-1">
+            Manage book issues and returns
+          </p>
+        </div>
+      </div>
 
       {user.role === "admin" && (
-        <form onSubmit={handleSubmit}>
-          <input
-            name="book_id"
-            placeholder="Book Id"
-            value={formData.book_id}
-            onChange={handleChange}
-          />
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+          <form onSubmit={handleSubmit}
+            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
 
-          <input
-            name="member_id"
-            placeholder="Member Id"
-            value={formData.member_id}
-            onChange={handleChange}
-          />
+            <Input
+              label="Book ID"
+              name="book_id"
+              placeholder="Enter book Id"
+              value={formData.book_id}
+              onChange={handleChange}
+              required
+            />
 
-          <input
-            name="issue_date"
-            placeholder="Issue Date"
-            value={formData.issue_date}
-            onChange={handleChange}
-          />
+            <Input
+              label="Member ID"
+              name="member_id"
+              placeholder="Enter member Id"
+              value={formData.member_id}
+              onChange={handleChange}
+              required
+            />
 
-          <Button type="submit">Add Issued book</Button>
-        </form>)}
+            <Input
+              label="Issue date"
+              name="issue_date"
+              placeholder="Enter issue date"
+              value={formData.issue_date}
+              onChange={handleChange}
+              required
+            />
+
+            <Button type="submit" className="w-fit self-end px-4">
+              Add Issued book
+            </Button>
+
+          </form>
+        </div>)}
 
       <div className="mt-6 overflow-x-auto bg-white rounded-lg shadow">
 
         <table className="min-w-full">
 
-          <thead className="bg-gray-100">
+          <thead className="bg-slate-100">
             <tr>
 
-              <th className="px-6 py-3 text-left">
-                Book
-              </th>
-
-              <th className="px-6 py-3 text-left">
-                Member
-              </th>
-
-              <th className="px-6 py-3 text-left">
-                Issue Date
-              </th>
-
-              <th className="px-6 py-3 text-left">
-                Return Date
-              </th>
-
-              <th className="px-6 py-3 text-left">
-                status
-              </th>
+              <th className="px-6 py-3 text-left">Book</th>
+              <th className="px-6 py-3 text-left">Member</th>
+              <th className="hidden md:table-cell px-6 py-3 text-left">Issue Date</th>
+              <th className="hidden md:table-cell px-6 py-3 text-left">Return Date</th>
+              <th className="px-6 py-3 text-left">status</th>
 
               {user.role === "admin" && (
                 <th className="px-6 py-3 text-left">
@@ -123,28 +137,35 @@ function Issuedbook() {
 
               <tr
                 key={issuedbook.id}
-                className="border-b hover:bg-gray-50"
+                className="border-b border-slate-200 hover:bg-slate-100 transition-colors"
               >
 
                 <td className="px-6 py-4">
                   {issuedbook.title}
                 </td>
 
-
                 <td className="px-6 py-4">
                   {issuedbook.name}
                 </td>
 
                 <td className="px-6 py-4">
-                  {issuedbook.issue_date}
-                </td>
-
-                <td className="px-6 py-4">
-                  {issuedbook.return_date}
-                </td>
-
-                <td className="px-6 py-4">
                   {issuedbook.status}
+                </td>
+
+                <td className="hidden md:table-cell px-6 py-4">
+                  {new Date(issuedbook.issue_date).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </td>
+
+                <td className="hidden md:table-cell px-6 py-4">
+                  {new Date(issuedbook.return_date).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </td>
 
                 {user.role === "admin" && (
@@ -152,11 +173,13 @@ function Issuedbook() {
                   <td className="px-6 py-4">
 
                     {issuedbook.status === "issued" && (
+
                       <button
-                        className="bg-green-500 text-white px-3 py-1 rounded"
+                        className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg transition"
                         onClick={() => handleReturn(issuedbook.id)}
                       >
-                        Return book
+                        <Undo2 size={16} />
+                        Return
                       </button>
                     )}
 
@@ -166,6 +189,29 @@ function Issuedbook() {
             ))}
           </tbody>
         </table>
+
+        <div className="flex items-center justify-center gap-2 mt-6">
+          <button
+            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+          >
+            ← Previous
+          </button>
+
+          <span className="px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium">
+            {page}
+          </span>
+
+          <button
+            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={page === totalPages}
+            onClick={() => setPage(page + 1)}
+          >
+            Next →
+          </button>
+        </div>
+
       </div>
     </div>
   );

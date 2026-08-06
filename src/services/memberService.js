@@ -1,7 +1,7 @@
 import api from "./api";
 
-export const getMembers = (search = "") => {
-  return api.get(`/members?name=${search}`);
+export const getMembers = (page,limit,search = "") => {
+  return api.get(`/members?page=${page}&limit=${limit}&name=${search}`);
 };
 
 export const addMember = async (memberData) => {

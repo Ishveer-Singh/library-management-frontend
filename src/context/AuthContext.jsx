@@ -14,7 +14,6 @@ export function AuthProvider({ children }) {
     return JSON.parse(data);
 });
 
-
     const login = (userData) => {
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
@@ -23,6 +22,7 @@ export function AuthProvider({ children }) {
     const logout = () => {
         setUser(null);
         localStorage.removeItem("user")
+        localStorage.removeItem("token");
     };
 
     return (

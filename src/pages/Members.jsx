@@ -3,16 +3,19 @@ import { getMembers, addMember, deleteMember, editMember } from "../services/mem
 import Button from "../components/Button";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import Input from "../components/Input";
+import { Pencil, Trash2, Plus, Search } from "lucide-react";
 
 function Members() {
 
   const { user } = useContext(AuthContext);
 
   const [members, setMembers] = useState([]);
-
   const [editingMember, setEditingMember] = useState(null);
-
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -21,13 +24,15 @@ function Members() {
   });
 
   const fetchMembers = async () => {
-    const response = await getMembers(search);
+    const response = await getMembers(page, limit, search);
     setMembers(response.data.data);
+    setTotalPages(response.data.totalPages);
+    console.log(response.data);
   };
 
   useEffect(() => {
     fetchMembers();
-  }, [search]);
+  }, [search, page]);
 
   const handleChange = (e) => {
     setFormData({
@@ -70,62 +75,84 @@ function Members() {
 
   return (
     <div>
-      <h1>Members</h1>
 
-      <input
-        type="text"
-        placeholder="Search member..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-800">
+            Members
+          </h1>
+
+          <p className="text-slate-500 mt-1">
+            Manage your library members
+          </p>
+        </div>
+      </div>
+
+      <div className="relative mb-6">
+        <Search
+          size={18}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+        />
+
+        <Input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search books..."
+          className="pl-12"
+        />
+      </div>
 
       {user.role === "admin" && (
-        <form onSubmit={handleSubmit}>
-          <input
-            name="name"
-            placeholder="Name"
-            value={formData.name}
-            onChange={handleChange}
-          />
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+          <form onSubmit={handleSubmit}
+            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
 
-          <input
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-          />
+            <Input
+              label="Name"
+              name="name"
+              placeholder="Enter Member name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
 
-          <input
-            name="phone"
-            placeholder="Phone number"
-            value={formData.phone}
-            onChange={handleChange}
-          />
+            <Input
+              label="Email"
+              name="email"
+              placeholder="Enter Member email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
 
-          <Button type="submit">
-            {editingMember ? "Update Member" : "Add Member"}
-          </Button>
+            <Input
+              label="Phone"
+              name="phone"
+              placeholder="Enter Member number"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+            />
 
-        </form>)}
+            <Button type="submit" className="w-fit self-end px-4">
+              {editingMember ? "Update Member" : "Add Member"}
+            </Button>
+
+          </form>
+        </div>
+      )}
 
       <div className="mt-6 overflow-x-auto bg-white rounded-lg shadow">
 
-        <table className="min-w-full">
+        <table className="min-w-full w-full">
 
-          <thead className="bg-gray-100">
+          <thead className="bg-slate-100">
             <tr>
 
-              <th className="px-6 py-3 text-left">
-                Name
-              </th>
-
-              <th className="px-6 py-3 text-left">
-                Email
-              </th>
-
-              <th className="px-6 py-3 text-left">
-                Phone
-              </th>
+              <th className="px-6 py-3 text-left">Name</th>
+              <th className="px-6 py-3 text-left">Email</th>
+              <th className="hidden md:table-cell px-6 py-3 text-left">Phone</th>
 
               {user.role === "admin" && (
                 <th className="px-6 py-3 text-left">
@@ -142,7 +169,7 @@ function Members() {
 
               <tr
                 key={member.id}
-                className="border-b hover:bg-gray-50"
+                className="border-b border-slate-200 hover:bg-slate-100 transition-colors"
               >
 
                 <td className="px-6 py-4">
@@ -153,7 +180,7 @@ function Members() {
                   {member.email}
                 </td>
 
-                <td className="px-6 py-4">
+                <td className="hidden md:table-cell px-6 py-4">
                   {member.phone}
                 </td>
 
@@ -162,17 +189,17 @@ function Members() {
                   <td className="px-6 py-4">
 
                     <button
-                      className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-2.5 mx-3 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
                       onClick={() => handleEdit(member)}
                     >
-                      Edit
+                      <Pencil size={16} />
                     </button>
 
                     <button
-                      className="bg-red-500 text-white px-3 py-1 rounded"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-2.5 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 transition"
                       onClick={() => handleDelete(member.id)}
                     >
-                      Delete
+                      <Trash2 size={16} />
                     </button>
 
                   </td>
@@ -181,10 +208,32 @@ function Members() {
             ))}
           </tbody>
         </table>
+
+        <div className="flex items-center justify-center gap-2 mt-6">
+          <button
+            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+          >
+            ← Previous
+          </button>
+
+          <span className="px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium">
+            {page}
+          </span>
+
+          <button
+            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={page === totalPages}
+            onClick={() => setPage(page + 1)}
+          >
+            Next →
+          </button>
+        </div>
+
       </div>
     </div>
   );
 }
 
 export default Members;
-
