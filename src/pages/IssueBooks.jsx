@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Input from "../components/Input";
 import { Undo2 } from "lucide-react";
+import { toast } from "react-toastify";
 
 function Issuedbook() {
 
@@ -41,6 +42,7 @@ function Issuedbook() {
     e.preventDefault();
 
     await addIssuedbook(formData);
+    toast.success("Book issued successfully!");
 
     setFormData({
       book_id: "",
@@ -52,6 +54,7 @@ function Issuedbook() {
 
   const handleReturn = async (id) => {
     await returnIssuedbook(id);
+    toast.success("Book returned successfully!");
     fetchIssuedbooks();
   };
 
@@ -99,7 +102,7 @@ function Issuedbook() {
               placeholder="Enter issue date"
               value={formData.issue_date}
               onChange={handleChange}
-              required
+
             />
 
             <Button type="submit" className="w-fit self-end px-4">
@@ -148,10 +151,6 @@ function Issuedbook() {
                   {issuedbook.name}
                 </td>
 
-                <td className="px-6 py-4">
-                  {issuedbook.status}
-                </td>
-
                 <td className="hidden md:table-cell px-6 py-4">
                   {new Date(issuedbook.issue_date).toLocaleDateString("en-GB", {
                     day: "2-digit",
@@ -166,6 +165,17 @@ function Issuedbook() {
                     month: "short",
                     year: "numeric",
                   })}
+                </td>
+
+                <td className="px-6 py-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${issuedbook.status === "issued"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-green-100 text-green-700"
+                      }`}
+                  >
+                    {issuedbook.status}
+                  </span>
                 </td>
 
                 {user.role === "admin" && (

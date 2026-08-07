@@ -63,17 +63,18 @@ function Profile() {
             </div>
           </div>
 
-          <div className="border-slate-200 mt-8 pt-6 flex justify-end">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-lg transition-colors "
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
-          </div>
-
         </div>
+
+        <div className="mt-8 flex justify-end">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-lg transition-colors "
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        </div>
+
       </div>
     </div>
   );

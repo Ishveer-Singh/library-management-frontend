@@ -4,10 +4,7 @@ const api = axios.create({
   baseURL: "http://localhost:3000/api/v1",
 });
 
-export default api;
-
 api.interceptors.request.use((config) => {
-
   const token = localStorage.getItem("token");
 
   if (token) {
@@ -16,3 +13,21 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      alert("Session expired. Please login again.");
+
+      window.location.href = "/login";
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;

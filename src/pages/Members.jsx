@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Input from "../components/Input";
 import { Pencil, Trash2, Plus, Search } from "lucide-react";
+import { toast } from "react-toastify";
 
 function Members() {
 
@@ -27,7 +28,6 @@ function Members() {
     const response = await getMembers(page, limit, search);
     setMembers(response.data.data);
     setTotalPages(response.data.totalPages);
-    console.log(response.data);
   };
 
   useEffect(() => {
@@ -45,8 +45,10 @@ function Members() {
 
     if (editingMember) {
       await editMember(editingMember.id, formData);
+      toast.success("Member updated successfully!");
     } else {
       await addMember(formData);
+      toast.success("Book added successfully!");
     }
 
     setFormData({
@@ -59,6 +61,7 @@ function Members() {
 
   const handleDelete = async (id) => {
     await deleteMember(id);
+    toast.success("Member deleted successfully!");
     fetchMembers();
   };
 
@@ -172,11 +175,11 @@ function Members() {
                 className="border-b border-slate-200 hover:bg-slate-100 transition-colors"
               >
 
-                <td className="px-6 py-4">
+                <td className="px-4 md:px-6 py-4 font-medium text-slate-800">
                   {member.name}
                 </td>
 
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 max-w-xs truncate">
                   {member.email}
                 </td>
 
@@ -187,21 +190,22 @@ function Members() {
                 {user.role === "admin" && (
 
                   <td className="px-6 py-4">
+                    <div className="flex gap-2 ">
 
-                    <button
-                      className="inline-flex items-center gap-1.5 px-2.5 py-2.5 mx-3 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
-                      onClick={() => handleEdit(member)}
-                    >
-                      <Pencil size={16} />
-                    </button>
+                      <button
+                        className="inline-flex items-center gap-1.5 px-2.5 py-2.5 mx-3 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                        onClick={() => handleEdit(member)}
+                      >
+                        <Pencil size={16} />
+                      </button>
 
-                    <button
-                      className="inline-flex items-center gap-1.5 px-2.5 py-2.5 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 transition"
-                      onClick={() => handleDelete(member.id)}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-
+                      <button
+                        className="inline-flex items-center gap-1.5 px-2.5 py-2.5 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 transition"
+                        onClick={() => handleDelete(member.id)}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 )}
               </tr>

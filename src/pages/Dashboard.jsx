@@ -33,8 +33,10 @@ function Dashboard() {
             } finally {
                 setLoading(false);
 
-            }}
-        fetchData();},[]);
+            }
+        }
+        fetchData();
+    }, []);
 
     const stats = [
 
@@ -56,7 +58,7 @@ function Dashboard() {
         {
             title: "Available Copies",
             value: books.reduce(
-                (total, book) => total + book.available_copies,0),
+                (total, book) => total + book.available_copies, 0),
             icon: <Library size={27} />,
         }
     ];
@@ -77,7 +79,7 @@ function Dashboard() {
             <div>
 
                 <h1 className="text-3xl font-bold text-gray-800">
-                    Welcome back👋
+                    Welcome back 👋
                 </h1>
                 <p className="text-gray-500 mt-1">
                     Manage your library efficiently with BookSphere.
@@ -89,49 +91,65 @@ function Dashboard() {
 
                 {stats.map((item, index) => (
 
-                    <Card key={index}
-                    className="hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
+                    <Card
+                        key={index}
+                        className="
+                        relative overflow-hidden
+                        bg-gradient-to-br from-white to-indigo-50
+                        p-6 min-h-40
+                        hover:-translate-y-1
+                        hover:shadow-xl
+                        transition-all duration-300
+                        cursor-pointer
+                    ">
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-start justify-between">
 
                             <div>
 
-                                <p className="text-gray-500 text-sm">
+                                <p className="text-slate-500 text-sm font-medium">
                                     {item.title}
                                 </p>
 
-                                <h2 className="text-3xl font-bold text-gray-800 mt-2">
+                                <h2 className="text-4xl font-bold text-slate-800 mt-4">
                                     {item.value}
                                 </h2>
 
+                                <p className="text-xs text-slate-500 mt-2">
+                                    Updated information
+                                </p>
+
                             </div>
 
-                            <div className="bg-indigo-100 text-indigo-600 p-4 rounded-2xl">
+                            <div className="
+                            bg-indigo-100 
+                            text-indigo-600 
+                            p-4 
+                            rounded-2xl
+                            ">
                                 {item.icon}
-
                             </div>
 
                         </div>
+
+                        <div className="
+                        absolute 
+                        -right-6 
+                        -bottom-6 
+                        w-24 
+                        h-24 
+                        bg-indigo-100 
+                        rounded-full 
+                        opacity-50
+                    " />
 
                     </Card>
 
                 ))}
 
             </div>
-
-            <Card>
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    Recent Activity
-                </h2>
-                <p className="text-gray-500">
-                    No recent activity available.
-                </p>
-            </Card>
-
         </div>
-
     );
-
 }
 
 export default Dashboard;

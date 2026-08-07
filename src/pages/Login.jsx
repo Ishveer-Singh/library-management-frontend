@@ -3,7 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import { loginUser } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-
+import { toast } from "react-toastify";
 import AuthLayout from "../components/AuthLayout";
 import Card from "../components/Card";
 import Input from "../components/Input";
@@ -25,6 +25,7 @@ function Login() {
     e.preventDefault();
 
     const response = await loginUser(formData)
+    toast.success("Login successful!");
 
     localStorage.setItem("token", response.data.data.token);
     login(response.data.data.user);

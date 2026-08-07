@@ -20,8 +20,6 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* <Route element={<DashboardLayout />}> */}
-
       <Route element={
       <ProtectedRoute>
         <DashboardLayout />

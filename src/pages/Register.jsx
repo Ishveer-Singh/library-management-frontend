@@ -5,6 +5,7 @@ import AuthLayout from "../components/AuthLayout";
 import Card from "../components/Card";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import { toast } from "react-toastify";
 
 function Register() {
 
@@ -29,7 +30,7 @@ function Register() {
     try {
       await registerUser(formData);
 
-      alert("Registration successful!");
+      toast.success("Registration successful!");
 
       navigate("/login");
 

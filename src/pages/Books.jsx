@@ -6,6 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 import Input from "../components/Input";
 import { Pencil, Trash2, Plus, Search } from "lucide-react";
 import Card from "../components/Card";
+import { toast } from "react-toastify";
 
 function Books() {
 
@@ -44,24 +45,40 @@ function Books() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (editingBook) {
-      await editBook(editingBook.id, formData);
-    } else {
-      await createBook(formData);
-    }
+    try {
+      if (editingBook) {
+        await editBook(editingBook.id, formData);
+        toast.info("Book updated!");
+      } else {
+        await createBook(formData);
+        toast.success("Book added successfully!");
+      }
 
-    setFormData({
-      title: "",
-      author: "",
-      category: "",
-      available_copies: "",
-    });
-    fetchBooks();
-  }
+      setEditingBook(null);
+
+      setFormData({
+        title: "",
+        author: "",
+        category: "",
+        available_copies: "",
+      });
+
+      fetchBooks();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to save book!");
+    }
+  };
 
   const handleDelete = async (id) => {
-    await deleteBook(id);
-    fetchBooks();
+    try {
+      await deleteBook(id);
+      toast.success("Book deleted successfully!");
+      fetchBooks();
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to delete book."
+      );
+    }
   };
 
   const handleEdit = (book) => {
@@ -185,7 +202,7 @@ function Books() {
                 className="border-b border-slate-200 hover:bg-slate-100 transition-colors"
               >
 
-                <td className="px-4 md:px-6 py-4">
+                <td className="px-4 md:px-6 py-4 font-medium text-slate-800">
                   {book.title}
                 </td>
 
@@ -193,8 +210,10 @@ function Books() {
                   {book.author}
                 </td>
 
-                <td className=" px-4 md:px-6 py-4 text-slate-600">
-                  {book.category}
+                <td className="px-4 md:px-6 py-4">
+                  <span className="px-3 py-1 text-xs rounded-full bg-indigo-100 text-indigo-700">
+                    {book.category}
+                  </span>
                 </td>
 
                 <td className="px-4 md:px-6 py-4 font-medium">
@@ -204,6 +223,7 @@ function Books() {
                 {user.role === "admin" && (
 
                   <td className="px-4 md:px-6 py-4">
+                    <div className="flex gap-2 ">
 
                     <button
                       className="inline-flex items-center gap-1.5 px-2.5 py-2.5 mx-3 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
@@ -218,7 +238,7 @@ function Books() {
                     >
                       <Trash2 size={16} />
                     </button>
-
+                    </div>
                   </td>
                 )}
               </tr>
