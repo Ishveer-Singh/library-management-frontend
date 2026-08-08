@@ -28,8 +28,8 @@ function Books() {
 
   const fetchBooks = async () => {
     const response = await getBooks(page, limit, search);
-    setBooks(response.data.data);
-    setTotalPages(response.data.totalPages);
+    setBooks(response.data);
+    setTotalPages(response.totalPages);
   };
 
   useEffect(() => {

@@ -26,8 +26,8 @@ function Members() {
 
   const fetchMembers = async () => {
     const response = await getMembers(page, limit, search);
-    setMembers(response.data.data);
-    setTotalPages(response.data.totalPages);
+    setMembers(response.data);
+    setTotalPages(response.totalPages);
   };
 
   useEffect(() => {
@@ -91,7 +91,7 @@ function Members() {
         </div>
       </div>
 
-      <div className="relative mb-6">
+      <div className="relative mb-6 max-w-md">
         <Search
           size={18}
           className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"

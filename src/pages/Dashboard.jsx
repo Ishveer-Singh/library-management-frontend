@@ -5,12 +5,15 @@ import { getBooks } from "../services/bookService";
 import { getMembers } from "../services/memberService";
 import { getIssuedbook } from "../services/issuedBookService";
 
-
 function Dashboard() {
 
     const [books, setBooks] = useState([]);
     const [members, setMembers] = useState([]);
     const [issuedBooks, setIssuedBooks] = useState([]);
+
+    const [totalBooks, setTotalBooks] = useState(0);
+    const [totalMembers, setTotalMembers] = useState(0);
+    const [totalIssuedBooks, setTotalIssuedBooks] = useState(0);
 
     const [loading, setLoading] = useState(true);
 
@@ -19,50 +22,60 @@ function Dashboard() {
         async function fetchData() {
 
             try {
+
                 const booksData = await getBooks();
                 const membersData = await getMembers();
                 const issuedData = await getIssuedbook();
 
-                setBooks(booksData.data.data);
-                setMembers(membersData.data.data);
+                setBooks(booksData.data);
+                setMembers(membersData.data);
                 setIssuedBooks(issuedData.data.data);
+s
+                setTotalBooks(booksData.totalBooks);
+                setTotalMembers(membersData.totalMembers);
+                setTotalIssuedBooks(issuedData.data.totalIssuedBooks);
 
             } catch (error) {
                 console.log(error);
-
             } finally {
                 setLoading(false);
-
             }
         }
+
         fetchData();
+
     }, []);
 
     const stats = [
 
         {
             title: "Total Books",
-            value: books.length,
+            value: totalBooks,
             icon: <BookOpen size={27} />,
         },
+
         {
             title: "Members",
-            value: members.length,
+            value: totalMembers,
             icon: <Users size={27} />,
         },
+
         {
             title: "Issued Books",
-            value: issuedBooks.length,
+            value: totalIssuedBooks,
             icon: <Repeat size={27} />,
         },
+
         {
             title: "Available Copies",
             value: books.reduce(
-                (total, book) => total + book.available_copies, 0),
+                (total, book) => total + Number(book.available_copies || 0),
+                0
+            ),
             icon: <Library size={27} />,
         }
-    ];
 
+    ];
 
     if (loading) {
         return (
@@ -81,6 +94,7 @@ function Dashboard() {
                 <h1 className="text-3xl font-bold text-gray-800">
                     Welcome back 👋
                 </h1>
+
                 <p className="text-gray-500 mt-1">
                     Manage your library efficiently with BookSphere.
                 </p>
@@ -94,14 +108,15 @@ function Dashboard() {
                     <Card
                         key={index}
                         className="
-                        relative overflow-hidden
-                        bg-gradient-to-br from-white to-indigo-50
-                        p-6 min-h-40
-                        hover:-translate-y-1
-                        hover:shadow-xl
-                        transition-all duration-300
-                        cursor-pointer
-                    ">
+                            relative overflow-hidden
+                            bg-linear-to-br from-white to-indigo-50
+                            p-6 min-h-40
+                            hover:-translate-y-1
+                            hover:shadow-xl
+                            transition-all duration-300
+                            cursor-pointer
+                        "
+                    >
 
                         <div className="flex items-start justify-between">
 
@@ -122,10 +137,10 @@ function Dashboard() {
                             </div>
 
                             <div className="
-                            bg-indigo-100 
-                            text-indigo-600 
-                            p-4 
-                            rounded-2xl
+                                bg-indigo-100
+                                text-indigo-600
+                                p-4
+                                rounded-2xl
                             ">
                                 {item.icon}
                             </div>
@@ -133,21 +148,22 @@ function Dashboard() {
                         </div>
 
                         <div className="
-                        absolute 
-                        -right-6 
-                        -bottom-6 
-                        w-24 
-                        h-24 
-                        bg-indigo-100 
-                        rounded-full 
-                        opacity-50
-                    " />
+                            absolute
+                            -right-6
+                            -bottom-6
+                            w-24
+                            h-24
+                            bg-indigo-100
+                            rounded-full
+                            opacity-50
+                        " />
 
                     </Card>
 
                 ))}
 
             </div>
+
         </div>
     );
 }

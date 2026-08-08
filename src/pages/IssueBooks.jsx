@@ -24,8 +24,8 @@ function Issuedbook() {
 
   const fetchIssuedbooks = async () => {
     const response = await getIssuedbook(page, limit);
-    setIssuedbooks(response.data.data);
-    setTotalPages(response.data.totalPages);
+    setIssuedbooks(response.data);
+    setTotalPages(response.totalPages);
   };
 
   useEffect(() => {

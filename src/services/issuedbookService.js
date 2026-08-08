@@ -1,7 +1,8 @@
 import api from "./api";
 
-export const getIssuedbook = (page,limit) => {
-  return api.get(`/issued-books?page=${page}&limit=${limit}`);
+export const getIssuedbook = async (page = 1, limit = 10) => {
+    const response = await api.get(`/issued-books?page=${page}&limit=${limit}`);
+    return response.data;
 };
 
 export const addIssuedbook = async (issuedbookdata) => {

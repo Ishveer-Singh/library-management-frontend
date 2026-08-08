@@ -1,7 +1,8 @@
 import api from "./api";
 
-export const getBooks = (page,limit,search = "") => {
-  return api.get(`/books?page=${page}&limit=${limit}&title=${search}`);
+export const getBooks = async (page,limit,search = "") => {
+  const response = await api.get(`/books?page=${page}&limit=${limit}&title=${search}`);
+   return response.data;
 };
 
 export const createBook = async (bookData) => {
